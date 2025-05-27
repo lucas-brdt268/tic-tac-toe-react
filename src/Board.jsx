@@ -1,22 +1,19 @@
 import Square from "./Square";
 
-export default function Board({ marks, isNextX, onPlay }) 
-{
+export default function Board({ marks, winner, isNextX, onPlay }) {
   //
 
-  function handleClick(i) 
-  {
+  function handleClick(i) {
     //
     if (marks[i] || winner) return;
 
     const nextMarks = marks.slice();
-    nextMarks[i] = isX ? "X" : "O";
+    nextMarks[i] = isNextX ? "X" : "O";
 
     onPlay(nextMarks);
   }
 
-  function createRow(c1, c2, c3) 
-  {
+  function createRow(c1, c2, c3) {
     //
     return (
       <div className="square-row">
@@ -28,17 +25,15 @@ export default function Board({ marks, isNextX, onPlay })
   }
 
   let status;
-  if(winner) {
-    status = 'Winner is ' + winner;
+  if (winner) {
+    status = "Winner is " + winner;
   } else {
-    status = 'Next: ' + (isNextX ? 'X' : 'O');
+    status = "Next: " + (isNextX ? "X" : "O");
   }
 
   return (
     <>
-      <div className='status'>
-        {status}
-      </div>
+      <div className="status">{status}</div>
       <div>
         {createRow(0, 1, 2)}
         {createRow(3, 4, 5)}

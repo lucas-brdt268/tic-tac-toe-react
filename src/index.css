@@ -39,3 +39,17 @@
 .status{
   margin: 10px;
 }
+
+.game{
+  display: flex;
+  flex-direction: row;
+}
+
+.game-history{
+  margin-top: 70px;
+  margin-left: 120px;
+}
+
+.current{
+  background-color: rgb(28, 98, 250);
+}

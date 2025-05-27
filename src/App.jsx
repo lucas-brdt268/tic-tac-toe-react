@@ -1,38 +1,13 @@
-import { useState } from 'react'
-import Square from './Square';
+import { useState } from "react";
+import Board from "./Board.jsx";
 
-function Game()
-{
-  return ();
-}
+function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [historyPos, setHistoryPos] = useState(history.length - 1);
 
-export default function App() {
-  //
-  const [marks, setMarks] = useState(Array(9).fill(null));
-  const [isX, setIsX] = useState(true);
-  const [winner, setWinner] = useState(null);
-
-  function handleClick(i) {
-    //
-    if(marks[i] || winner) return;
-    
-    const nextMarks = marks.slice();
-    nextMarks[i] = (isX ? 'X' : 'O');
-    setIsX(!isX);
-    setMarks(nextMarks);
-    setWinner(whoIsWinner(nextMarks));
-  }
-
-  function createRow(c1, c2, c3) {
-    //
-    return (
-      <div className='square-row'>
-        <Square mark={marks[c1]} onClick={() => handleClick(c1)} />
-        <Square mark={marks[c2]} onClick={() => handleClick(c2)} />
-        <Square mark={marks[c3]} onClick={() => handleClick(c3)} />
-      </div>
-    );
-  }
+  const marks = history[historyPos];
+  const winner = whoIsWinner(marks);
+  const isNextX = historyPos % 2 !== 0;
 
   function whoIsWinner(m) {
     //
@@ -44,33 +19,50 @@ export default function App() {
       [1, 4, 7],
       [2, 5, 8],
       [0, 4, 8],
-      [2, 4, 6]
+      [2, 4, 6],
     ];
 
-    for(let line of lines) {
+    for (let line of lines) {
       const [a, b, c] = line;
-      if(m[a] === m[b] && m[a] === m[c]) return m[a];
+      if (m[a] === m[b] && m[a] === m[c]) return m[a];
     }
     return null;
   }
 
-  let status;
-  if(winner) {
-    status = 'Winner is ' + winner;
-  } else {
-    status = 'Next: ' + (isX ? 'X' : 'O');
+  function hanldlePlay(m) {
+    //
+    const nextHistory = history.slice(0, historyPos + 1);
+    nextHistory.push(m);
+    setHistory(nextHistory);
+    setHistoryPos(historyPos + 1);
   }
 
+  function jump(toHistoryPos) {
+    setHistoryPos(toHistoryPos);
+  }
+
+  let historyShow = history.map((marks, idx) => {
+    return (
+      <li key={idx}>
+        <button onClick={() => jump(idx)} className={idx === historyPos ? 'current' : ''}>
+          {idx === 0 ? 'Go to game start' : `Jump to #${idx}`}</button>
+      </li>
+      );
+  });
+
   return (
-    <>
-      <div className='status'>
-        {status}
+    <div className="game">
+      <div className="game-board">
+        <Board marks={marks} winner={winner} isNextX={isNextX} onPlay={hanldlePlay} />
       </div>
-      <div>
-        {createRow(0, 1, 2)}
-        {createRow(3, 4, 5)}
-        {createRow(6, 7, 8)}
+      <div className="game-history">
+        <ol>{historyShow}</ol>
       </div>
-    </>
+    </div>
   );
+}
+
+export default function App() {
+  //
+  return <Game />
 }
